@@ -1,0 +1,6 @@
+button{
+    width: 95%;
+}
+.layui-form input,.layui-form button{
+    border: 1px solid black;
+}

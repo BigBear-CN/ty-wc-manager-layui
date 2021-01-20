@@ -1,0 +1,23 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    background-color: #C7EDCC;
+}
+
+/*内联页面*/
+.content{
+    padding: 2%;
+}
+
+/*提示信息*/
+.tip_success_sm{
+    font-size: 15px;
+    color: #32cd32;
+}
+.tip_fail_sm{
+    font-size: 15px;
+    color: red;
+}

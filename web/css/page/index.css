@@ -1,0 +1,33 @@
+/*头部导航栏*/
+.header a{
+    color: white;
+    text-align:center;
+}
+.header .title{
+    font-size: 20px;
+}
+.header .right{
+    position: absolute;
+    right: 50px;
+    font-size: 30px;
+}
+
+/*左侧导航栏*/
+.side a{
+    font-size: 15px;
+    color: white;
+}
+.side dl{
+    text-align: center;
+}
+
+/*内容部分*/
+.body a{
+    font-size: 15px;
+}
+
+/*个人信息表单*/
+#personalForm {
+    width: 80%;
+    margin: 40px 20px 40px 0;
+}

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>角色</title>
+    <link rel="stylesheet" href="../resources/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../resources/zTree_v3/css/zTreeStyle/zTreeStyle.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/page/role.css">
+</head>
+<body>
+<div class="content">
+    <!-- 角色列表开始 -->
+    <table class="layui-table" id="roleList" lay-filter="roleList"></table>
+    <!-- 角色列表结束 -->
+
+    <!-- 添加表单开始 -->
+    <div style="display: none;" id="addDiv">
+        <form class="layui-form" action="" lay-filter="addForm" id="addForm">
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色名称</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="roleName" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色介绍</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="introduce" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="addSubmit"><i class="layui-icon">&#x1005;</i>确认</button>
+                    <button type="reset" class="layui-btn layui-btn-warm"><i class="layui-icon">&#xe9aa;</i>重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- 添加表单结束 -->
+
+    <!-- 修改表单开始 -->
+    <div style="display: none;" id="updateDiv">
+        <form class="layui-form" action="" lay-filter="updateForm" id="updateForm">
+            <div class="layui-form-item" style="display: none">
+                <label class="layui-form-label">ID</label>
+                <div class="layui-input-block">
+                    <input type="text" name="id"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色名称</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="roleName" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">角色介绍</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="introduce" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="updateSubmit"><i class="layui-icon">&#x1005;</i>确认</button>
+                    <button type="reset" class="layui-btn layui-btn-warm"><i class="layui-icon">&#xe9aa;</i>重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- 修改表单结束 -->
+
+    <!-- 菜单树开始 -->
+    <div id="menuDiv" class="ztree" style="display: none;"></div>
+    <!-- 菜单树结束 -->
+
+    <!-- 权限树开始 -->
+    <div id="permissionDiv" class="ztree" style="display: none;"></div>
+    <!-- 权限树结束 -->
+</div>
+
+<script src="http://localhost:63342/ty-wc-manager-layui/web/js/wcManager.js" charset="utf-8"></script>
+
+<!-- zTree -->
+<script src="http://localhost:63342/ty-wc-manager-layui/web/resources/zTree_v3/js/jquery.ztree.core.min.js"></script>
+<script src="http://localhost:63342/ty-wc-manager-layui/web/resources/zTree_v3/js/jquery.ztree.excheck.js"></script>
+
+<!-- 头部工具栏 -->
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="refresh"><i class="layui-icon">&#xe9aa;</i>刷新</button>
+        <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i>添加</button>
+        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="deleteBatch"><i class="layui-icon">&#xe640;</i>删除</button>
+    </div>
+</script>
+
+<!-- 行工具栏 -->
+<script type="text/html" id="operateCol">
+    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update">修改</a>
+    <a class="layui-btn layui-btn-sm layui-btn-warm" lay-event="menu">菜单</a>
+    <a class="layui-btn layui-btn-sm layui-btn-warm" lay-event="permission">权限</a>
+    <a class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">删除</a>
+</script>
+
+<script>
+    // ajax全局参数设置，允许携带cookie
+    $.ajaxSetup({
+        xhrFields: {
+            withCredentials: true
+        }
+    })
+
+    layui.use(['table','layer','form','tree'], function(){
+        let table = layui.table;
+        let layer = layui.layer;
+        let form = layui.form;
+        let tree = layui.tree;
+
+        let menuTreeObj;
+        let permissionTreeObj;
+        let curRoleId;
+
+        // 渲染数据表格
+        let tableId = "roleList";
+        let url = URL.serverHost + URL.role +URL.list;
+        let toolbarId = "toolbarDemo";
+        let cols = [[
+            {type:'checkbox', fixed:'center', width: 80}
+            ,{field: 'id', title: 'ID', align:'center',  sort: true, width: 80}
+            ,{field: 'roleName', title: '角色名称', align:'center', width: 160}
+            ,{field: 'introduce', title: '角色介绍', align:'center', width: 400}
+            ,{field: 'createTime', title: '创建时间', align:'center', width: 160}
+            ,{field: 'updateTime', title: '修改时间', align:'center', width: 160}
+            ,{title:'操作',templet:'#operateCol', fixed: 'right', align:'center'}
+        ]];
+        utils.renderTable(tableId, url, toolbarId, cols, utils.formatResult);
+
+        // 监听头部工具栏事件
+        table.on('toolbar(roleList)', function (obj) {
+            let checkStatus = table.checkStatus(obj.config.id);
+            switch(obj.event){
+                case 'refresh':
+                    utils.reloadTable("roleList", {});
+                    break;
+                case 'add':
+                    openAddDiv();
+                    break;
+                case 'deleteBatch':
+                    let ids=[];
+                    for (let i = 0; i < checkStatus.data.length; i++) {
+                        ids.push(checkStatus.data[i].id);
+                    }
+                    deleteBatch(ids);
+                    break;
+                default :
+                    break;
+            }
+        })
+
+        // 监听行工具事件
+        table.on('tool(roleList)', function(obj){
+            let rowJsonObj = obj.data;
+            switch(obj.event){
+                case 'update':
+                    openUpdateDiv(rowJsonObj);
+                    break;
+                case 'delete':
+                    deleteById(rowJsonObj.id);
+                    break;
+                case 'menu':
+                    openMenuDiv(rowJsonObj);
+                    break;
+                case 'permission':
+                    openPermissionDiv(rowJsonObj);
+                    break;
+            }
+        });
+
+        // 修改角色的菜单
+        function openMenuDiv(rowJsonObj) {
+            curRoleId = rowJsonObj.id;
+            renderRoleMenuDiv(rowJsonObj.id);
+            layer.open({
+                type:1
+                ,skin: 'layui-layer-lan'
+                ,title: ['&nbsp&nbsp'+rowJsonObj.roleName+'&nbsp&nbsp的菜单', 'font-size:15px;']
+                ,content: $("#menuDiv")
+                ,area:  ['500px','500px']
+                ,btn: ['确认','取消']
+                ,yes: function () {
+                    let nodes = menuTreeObj.getCheckedNodes(true);
+                    let menusId = [];
+                    for (let i = 0; i < nodes.length; i++) {
+                        menusId.push(nodes[i].id);
+                    }
+                    updateRoleMenus(curRoleId, menusId);
+                }
+                ,btn2: function () {
+                    layer.close(layer.index);
+                }
+            });
+        }
+        function updateRoleMenus(roleId,menusId) {
+            roleMenuPost.updateRoleMenus(roleId, menusId, function (result) {
+                if (result.code === CODE.success) {
+                    layer.close(layer.index);
+                    utils.successMsg("成功");
+                } else {
+                    utils.errorMsg(result.msg());
+                }
+            });
+        }
+        function renderRoleMenuDiv(roleId) {
+            roleMenuPost.queryRoleMenus(roleId, function (result) {
+                let setting = {
+                    check: {
+                        enable: true
+                        ,chkStyle: "checkbox"
+                        ,chkboxType: { "Y": "p", "N": "s" }
+                    },
+                    data: {
+                        key: {
+                            name: "menuName"
+                        },
+                        simpleData: {
+                            enable: true,
+                            idKey: "id",
+                            pIdKey: "pid",
+                            rootPId: 0
+                        },
+                    },
+                };
+                let zNodes = result.data;
+                menuTreeObj = $.fn.zTree.init($("#menuDiv"), setting, zNodes);
+                menuTreeObj.expandAll(true);
+            });
+        }
+
+        // 修改角色的权限
+        function openPermissionDiv(rowJsonObj) {
+            curRoleId = rowJsonObj.id;
+            renderRolePermissionDiv(rowJsonObj.id);
+            layer.open({
+                type:1
+                ,skin: 'layui-layer-lan'
+                ,title: ['&nbsp&nbsp'+rowJsonObj.roleName+'&nbsp&nbsp的权限', 'font-size:15px;']
+                ,content: $("#permissionDiv")
+                ,area:  ['500px','500px']
+                ,btn: ['确认','取消']
+                ,yes: function () {
+                    let nodes = permissionTreeObj.getCheckedNodes(true);
+                    let permissionsId = [];
+                    for (let i = 0; i < nodes.length; i++) {
+                        permissionsId.push(nodes[i].id);
+                    }
+                    updateRolePermissions(curRoleId, permissionsId);
+                }
+                ,btn2: function () {
+                    layer.close(layer.index);
+                }
+            });
+        }
+        function updateRolePermissions(roleId, permissionsId) {
+            rolePermissionPost.updateRolePermissions(roleId, permissionsId, function (result) {
+                if (result.code === CODE.success) {
+                    layer.close(layer.index);
+                    utils.successMsg("成功");
+                } else {
+                    utils.errorMsg(result.msg());
+                }
+            });
+        }
+        function renderRolePermissionDiv(roleId) {
+           rolePermissionPost.queryRolePermissions(roleId, function (result) {
+                let setting = {
+                    check: {
+                        enable: true
+                        ,chkStyle: "checkbox"
+                        ,chkboxType: { "Y": "s", "N": "s" }
+                    },
+                    data: {
+                        key: {
+                            name: "permissionName"
+                        },
+                        simpleData: {
+                            enable: true,
+                            idKey: "id",
+                            pIdKey: "pid",
+                            rootPId: 0
+                        },
+                    },
+                };
+                let zNodes = result.data;
+                permissionTreeObj = $.fn.zTree.init($("#permissionDiv"), setting, zNodes);
+            });
+        }
+
+        // 添加角色
+        function openAddDiv() {
+            layer.open({
+                type:1
+                ,skin: 'layui-layer-lan'
+                ,title: ['添加角色', 'font-size:15px;']
+                ,content: $("#addDiv")
+                ,area:  ['500px']
+                ,success: function () {
+                    utils.clearForm("addForm");
+                }
+            });
+        }
+        form.on('submit(addSubmit)', function (form) {
+            let formJsonObj = form.field;
+            if (utils.isEmpty(formJsonObj.roleName)) {
+                layer.msg('角色名称不能为空');
+                return false;
+            }
+            rolePost.add(formJsonObj, function (result) {
+                if (result.code === CODE.success) {
+                    utils.reloadTable("roleList", {});
+                    layer.close(layer.index);
+                    utils.successMsg("成功");
+                } else {
+                    utils.errorMsg(result.msg());
+                }
+            });
+            return false;
+        });
+
+        // 修改角色
+        function openUpdateDiv(rowJsonObj) {
+            layer.open({
+                type:1
+                ,skin: 'layui-layer-lan'
+                ,title: ['修改角色', 'font-size:15px;']
+                ,content: $("#updateDiv")
+                ,area: ['500px']
+                ,success: function () {
+                    utils.clearForm("updateForm");
+                    form.val("updateForm",rowJsonObj);
+                }
+            });
+        }
+        form.on('submit(updateSubmit)', function (form) {
+            let formJsonObj = form.field;
+            if (utils.isEmpty(formJsonObj.roleName)) {
+                layer.msg('角色名称不能为空');
+                return false;
+            }
+            rolePost.update(formJsonObj, function (result) {
+                if (result.code === CODE.success) {
+                    utils.reloadTable("roleList", {});
+                    layer.close(layer.index);
+                    utils.successMsg("成功");
+                } else {
+                    utils.errorMsg(result.msg);
+                }
+            });
+            return false;
+        });
+
+        //删除1个角色
+        function deleteById(id) {
+            if (utils.isEmpty(id)) {
+                layer.msg('角色ID不能为空');
+                return false;
+            }
+            layer.confirm('确认删除？', function(){
+                rolePost.delete(id, function (result) {
+                    if (result.code === CODE.success) {
+                        utils.reloadTable("roleList", {});
+                        layer.close(layer.index);
+                        utils.successMsg("成功");
+                    } else {
+                        utils.errorMsg(result.msg());
+                    }
+                });
+            });
+        }
+
+        // 删除多个角色
+        function deleteBatch(ids) {
+            if (ids.length < 1) {
+                layer.msg('请勾选至少1个角色');
+                return false;
+            }
+            layer.confirm('确认删除？', function(){
+                rolePost.deleteBatch(ids, function (result) {
+                    if (result.code === CODE.success) {
+                        utils.reloadTable("roleList");
+                        layer.close(layer.index);
+                        utils.successMsg("成功");
+                    } else {
+                        utils.errorMsg(result.msg());
+                    }
+                });
+            });
+        }
+
+    });
+</script>
+
+</body>
+</html>

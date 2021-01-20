@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理系统-登陆</title>
+    <link rel="stylesheet" href="../resources/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/page/login.css" media="all">
+</head>
+<body>
+<div class="main-body">
+    <div class="login-main">
+        <div class="login-top">
+            <span>后台管理系统登陆</span>
+            <span class="bg1"></span>
+            <span class="bg2"></span>
+        </div>
+        <form class="layui-form login-bottom" action="">
+            <div class="center">
+                <div class="item">
+                    <span class="icon icon-2"></span>
+                    <input type="text" name="username"  placeholder="请输入登录账号" maxlength="24"/>
+                </div>
+                <div class="item">
+                    <span class="icon icon-3"></span>
+                    <input type="password" name="password"  placeholder="请输入密码" maxlength="20">
+                </div>
+            </div>
+            <div class="layui-form-item" style="text-align:center; width:100%;height:100%;margin:0px;">
+                <button class="login-btn" lay-submit lay-filter="login">立即登录</button>
+            </div>
+            <div class="layui-form-item" style="text-align:center; width:100%;height:100%;margin:0px;">
+                <button class="login-btn" type="reset" >重置</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="http://localhost:63342/ty-wc-manager-layui/web/js/wcManager.js" charset="utf-8"></script>
+<script>
+    layui.use(['form','jquery'], function () {
+        let form = layui.form;
+        let layer = layui.layer;
+        // 监听登录
+        form.on('submit(login)', function (form) {
+            let username = form.field.username
+            let password = form.field.password
+            // 必填项非空判断
+            if (utils.isEmpty(username)) {
+                layer.msg('用户名不能为空');
+                return false;
+            }
+            if (utils.isEmpty(password)) {
+                layer.msg('密码不能为空');
+                return false;
+            }
+            adminPost.login(username, password, function (result) {
+                if (result.code === CODE.success) {
+                    window.location.href="index.html";
+                } else {
+                    utils.errorMsg(result.msg);
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

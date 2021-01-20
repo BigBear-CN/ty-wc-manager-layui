@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>密码修改</title>
+    <link rel="stylesheet" href="../resources/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/page/updatePwd.css">
+</head>
+<body>
+<div class="content">
+    <form class="layui-form" action="" method="post">
+        <div class="layui-form-item">
+            <label class="layui-form-label">旧密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="password" placeholder="请输入旧密码" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">新密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="newPassword" placeholder="请输入新密码" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">确认密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="rePassword" placeholder="请输入确认密码" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-radius layui-btn-normal" lay-submit lay-filter="submitBtn">提交</button>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="reset" class="layui-btn layui-btn-radius layui-btn-normal">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="http://localhost:63342/ty-wc-manager-layui/web/js/wcManager.js" charset="utf-8"></script>
+<script>
+    layui.use(['form','jquery'], function () {
+        let $ = layui.jquery,
+            form = layui.form,
+            layer = layui.layer;
+        // 监听提交
+        form.on('submit(submitBtn)', function (form) {
+            let formData = form.field;
+            // 必填项非空判断
+            if (utils.isEmpty(formData.password)) {
+                layer.msg('旧密码不能为空');
+                return false;
+            }
+            if (utils.isEmpty(formData.newPassword)) {
+                layer.msg('新密码不能为空');
+                return false;
+            }
+            if (utils.isEmpty(formData.rePassword)) {
+                layer.msg('确认密码不能为空');
+                return false;
+            }
+            if (formData.rePassword !== formData.newPassword) {
+                layer.msg('确认密码与新密码不同');
+                return false;
+            }
+            adminPost.updatePwd(formData, function (result) {
+                if (result.code === CODE.success) {
+                    utils.successMsg("密码已修改");
+                    setTimeout(function(){
+                        window.parent.location.href="login.html";
+                    }, 1000);
+                } else {
+                    utils.errorMsg(result.msg);
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

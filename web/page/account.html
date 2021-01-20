@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>account</title>
+
+    <link rel="stylesheet" href="../resources/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/page/account.css">
+</head>
+<body>
+<div class="content">
+
+    <!-- 搜索表单开始 -->
+    <div id="searchDiv">
+        <form class="layui-form" id="searchForm">
+            <div class="layui-form-item">
+                <div class="layui-input-inline">
+                    <input type="text" name="id" class="layui-input" placeholder="ID"/>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="customerName" class="layui-input" placeholder="客户名称" />
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="account" class="layui-input" placeholder="登录账号" />
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="contact" class="layui-input" placeholder="联系人" />
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="phone" class="layui-input" maxlength="11" placeholder="联系电话" />
+                </div>
+                <div class="layui-input-inline">
+                    <select name="level">
+                        <option value="">等级</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline">
+                    <select name="state">
+                        <option value="">状态</option>
+                        <option value="1">正常</option>
+                        <option value="0">锁定</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-inline">
+                    <input type="text" id="createStartTime" name="createStartTime" class="layui-input" placeholder="创建时间下限"/>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" id="createEndTime" name="createEndTime" class="layui-input" placeholder="创建时间上限"/>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" id="updateStartTime" name="updateStartTime" class="layui-input" placeholder="修改时间下限"/>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" id="updateEndTime" name="updateEndTime" class="layui-input" placeholder="修改时间上限"/>
+                </div>
+                <button class="layui-btn " lay-submit lay-filter="searchSubmit"><i class="layui-icon">&#xe615;</i>搜索</button>
+                <button type="reset" class="layui-btn "><i class="layui-icon">&#xe9aa;</i>重置</button>
+            </div>
+        </form>
+    </div>
+    <!-- 搜索表单结束 -->
+
+    <!-- 客户列表开始 -->
+    <div>
+        <table class="layui-hide" lay-filter="accountList" id="accountList"></table>
+    </div>
+    <!-- 客户列表结束 -->
+
+    <!-- 添加客户表单开始 -->
+    <div style="display: none;padding-top: 30px;" id="addDiv">
+        <form class="layui-form" action="" lay-filter="addForm" id="addForm">
+            <div class="layui-form-item">
+                <label class="layui-form-label">客户名称</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="customerName" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">登录账号</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="account" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">账号密码</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="password" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">等级</label>
+                <div class="layui-input-block">
+                    <select name="level">
+                        <option value="1" selected>1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-block">
+                    <select name="state">
+                        <option value="1" selected>正常</option>
+                        <option value="0">锁定</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">联系人</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="contact" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">联系电话</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="phone" maxlength="11" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="addSubmit"><i class="layui-icon">&#x1005;</i>确认</button>
+                    <button type="reset" class="layui-btn layui-btn-warm"><i class="layui-icon">&#xe9aa;</i>重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- 添加客户表单结束 -->
+
+    <!-- 修改客户表单开始 -->
+    <div style="display: none;padding-top: 30px;" id="updateDiv">
+        <form class="layui-form" action="" lay-filter="updateForm" id="updateForm">
+            <div class="layui-form-item" style="display: none;">
+                <label class="layui-form-label">ID</label>
+                <div class="layui-input-block">
+                    <input type="text" name="id"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">客户名称</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="customerName" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">登录账号</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="account" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">账号密码</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="password" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">等级</label>
+                <div class="layui-input-block">
+                    <select name="level">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-block">
+                    <select name="state">
+                        <option value="1">正常</option>
+                        <option value="0">锁定</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">联系人</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="contact" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">联系电话</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="phone" maxlength="11" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="updateSubmit"><i class="layui-icon">&#x1005;</i>确认</button>
+                    <button type="reset" class="layui-btn layui-btn-warm"><i class="layui-icon">&#xe9aa;</i>重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- 修改客户表单结束 -->
+
+</div>
+
+<script src="http://localhost:63342/ty-wc-manager-layui/web/js/wcManager.js" charset="utf-8"></script>
+
+<!-- 头部工具栏 -->
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i>添加</button>
+        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除</button>
+    </div>
+</script>
+
+<!-- 行工具栏 -->
+<script type="text/html" id="operateCol">
+    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update">修改</a>
+    <a class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">删除</a>
+</script>
+
+<script>
+    // 全局参数设置
+    // ajax全局参数设置，允许携带cookie
+    $.ajaxSetup({
+        xhrFields: {
+            withCredentials: true
+        }
+    })
+
+    layui.use(['table','layer','form','laydate'], function(){
+        let table = layui.table;
+        let layer = layui.layer;
+        let form = layui.form;
+        let laydate = layui.laydate;
+
+        // 渲染数据表格
+        let tableId = "accountList";
+        let url = URL.serverHost + URL.account +URL.listByCondition;
+        let toolbarId = "toolbarDemo";
+        let cols = [[
+            {type:'checkbox', fixed:'center', width: 80}
+            ,{field: 'id', width: 80, title: 'ID', sort: true, align: 'center'}
+            ,{field: 'customerName', width: 160, title: '客户名称', align: 'center'}
+            ,{field: 'account', width: 160, title: '登录账号', align: 'center'}
+            ,{field: 'password', width: 160, title: '账号密码', align: 'center'}
+            ,{field: 'level', width: 80, title: '等级', sort: true, align: 'center'}
+            ,{field: 'state', width: 80, title: '状态', sort: true, align: 'center',templet: function (d) {
+                    return utils.formatState(d.state);
+                }}
+            ,{field: 'contact', width: 160, title: '联系人', align: 'center'}
+            ,{field: 'phone', width: 160, title: '联系电话', align: 'center'}
+            ,{field: 'createTime', width: 160, title: '创建时间', sort: true, align: 'center'}
+            ,{field: 'updateTime', width: 160, title: '修改时间', sort: true, align: 'center'}
+            ,{field: 'operate', title: '操作', align: 'center', toolbar: '#operateCol'}
+        ]];
+        utils.renderTable(tableId, url, toolbarId, cols, utils.formatResult);
+
+        // 监听搜索表单提交
+        form.on('submit(searchSubmit)', function (form) {
+            let formJsonObj = form.field;
+            utils.reloadTable("accountList", formJsonObj);
+            return false;
+        });
+
+        // 监听头部工具栏事件
+        table.on('toolbar(accountList)', function (obj) {
+            let checkStatus = table.checkStatus(obj.config.id);
+            switch(obj.event){
+                case 'add':
+                    openAddDiv();
+                    break;
+                case 'delete':
+                    let ids=[];
+                    for (let i = 0; i < checkStatus.data.length; i++) {
+                        ids.push(checkStatus.data[i].id);
+                    }
+                    deleteBatch(ids);
+                    break;
+                default :
+                    break;
+            }
+        })
+
+        // 监听行工具事件
+        table.on('tool(accountList)', function(obj){
+            let rowJsonObj = obj.data;
+            switch(obj.event){
+                case 'update':
+                    openUpdateDiv(rowJsonObj);
+                    break;
+                case 'delete':
+                    deleteById(rowJsonObj.id);
+                    break;
+                default :
+                    break;
+            }
+        });
+
+        // 添加客户
+        function openAddDiv() {
+            layer.open({
+                type:1
+                ,skin: 'layui-layer-lan'
+                ,title: ['添加客户', 'font-size:15px;']
+                ,content: $("#addDiv")
+                ,area:  ['500px']
+                ,success: function () {
+                    utils.clearForm("addForm");
+                }
+            });
+        }
+        form.on('submit(addSubmit)', function (form) {
+            let jsonObj = form.field;
+            if (utils.isEmpty(jsonObj.customerName)) {
+                utils.errorMsg('客户名称不能为空');
+                return false;
+            }
+            if (utils.isEmpty(jsonObj.account)) {
+                utils.errorMsg('登录账号不能为空');
+                return false;
+            }
+            if (utils.isEmpty(jsonObj.password)) {
+                utils.errorMsg('账号密码不能为空');
+                return false;
+            }
+            if (utils.isEmpty(jsonObj.level)) {
+                utils.errorMsg('等级不能为空');
+                return false;
+            }
+            if (utils.isEmpty(jsonObj.state)) {
+                utils.errorMsg('状态不能为空');
+                return false;
+            }
+            if (utils.isEmpty(jsonObj.contact)) {
+                utils.errorMsg('联系人不能为空');
+                return false;
+            }
+            if (utils.isEmpty(jsonObj.phone)) {
+                utils.errorMsg('联系电话不能为空');
+                return false;
+            }
+            accountPost.add(jsonObj, function (result) {
+                if (result.code === CODE.success) {
+                    utils.reloadTable("accountList", {});
+                    layer.close(layer.index);
+                    utils.successMsg("成功");
+                } else {
+                    utils.errorMsg(result.msg());
+                }
+            })
+            return false;
+        });
+
+        // 删除多个客户
+        function deleteBatch(ids) {
+            if (ids.length < 1) {
+                layer.msg('请勾选至少1个管理员');
+                return false;
+            }
+            layer.confirm('确认删除？', function(){
+                accountPost.deleteBatch(ids, function (result) {
+                    if (result.code === CODE.success) {
+                        utils.reloadTable("accountList");
+                        layer.close(layer.index);
+                        utils.successMsg("成功");
+                    } else {
+                        utils.errorMsg(result.msg);
+                    }
+                });
+            });
+        }
+
+        // 修改客户
+        function openUpdateDiv(rowJsonObj) {
+            layer.open({
+                type:1
+                ,skin: 'layui-layer-lan'
+                ,title: ['修改客户', 'font-size:15px;']
+                ,content: $("#updateDiv")
+                ,area:  ['500px']
+                ,success: function () {
+                    utils.clearForm("updateForm");
+                    form.val("updateForm",rowJsonObj);
+                }
+            });
+        }
+        form.on('submit(updateSubmit)', function (form) {
+            let jsonObj = form.field;
+            if (utils.isEmpty(jsonObj.customerName)) {
+                utils.errorMsg('客户名称不能为空');
+                return false;
+            }
+            if (utils.isEmpty(jsonObj.account)) {
+                utils.errorMsg('登录账号不能为空');
+                return false;
+            }
+            if (utils.isEmpty(jsonObj.password)) {
+                utils.errorMsg('账号密码不能为空');
+                return false;
+            }
+            if (utils.isEmpty(jsonObj.level)) {
+                utils.errorMsg('等级不能为空');
+                return false;
+            }
+            if (utils.isEmpty(jsonObj.state)) {
+                utils.errorMsg('状态不能为空');
+                return false;
+            }
+            if (utils.isEmpty(jsonObj.contact)) {
+                utils.errorMsg('联系人不能为空');
+                return false;
+            }
+            if (utils.isEmpty(jsonObj.phone)) {
+                utils.errorMsg('联系电话不能为空');
+                return false;
+            }
+            accountPost.update(jsonObj, function (result) {
+                if (result.code === CODE.success) {
+                    utils.reloadTable("accountList", {});
+                    layer.close(layer.index);
+                    utils.successMsg("成功");
+                } else {
+                    utils.errorMsg(result.msg);
+                }
+            });
+            return false;
+        });
+
+        // 删除1个客户
+        function deleteById(id) {
+            if (utils.isEmpty(id)) {
+                layer.msg('客户ID不能为空');
+                return false;
+            }
+            layer.confirm('确认删除？', function(){
+                accountPost.delete(id, function (result) {
+                    if (result.code === CODE.success) {
+                        utils.reloadTable("accountList", {});
+                        layer.close(layer.index);
+                        utils.successMsg("成功");
+                    } else {
+                        utils.errorMsg(result.msg);
+                    }
+                });
+            });
+        }
+
+        // 渲染时间选择器
+        laydate.render({elem: '#createStartTime',type: 'datetime'});
+        laydate.render({elem: '#createEndTime',type: 'datetime'});
+        laydate.render({elem: '#updateStartTime',type: 'datetime'});
+        laydate.render({elem: '#updateEndTime',type: 'datetime'});
+    });
+</script>
+</body>
+</html>

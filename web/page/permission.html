@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>权限</title>
+    <link rel="stylesheet" href="../resources/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/page/permission.css">
+</head>
+<body>
+<div class="content">
+    <button class="layui-btn layui-btn-normal layui-btn-sm" id="refresh"><i class="layui-icon">&#xe9aa;</i>刷新</button>
+    <button class="layui-btn layui-btn-normal layui-btn-sm" id="openAll"><i class="layui-icon">&#xe622;</i>全部展开</button>
+    <button class="layui-btn layui-btn-normal layui-btn-sm" id="closeAll"><i class="layui-icon">&#xe758;</i>全部关闭</button>
+    <button class="layui-btn layui-btn-sm layui-btn-warm" id="addGradeOne"><i class="layui-icon">&#xe654;</i>添加1级权限</button>
+    <button class="layui-btn layui-btn-danger layui-btn-sm" id="deleteBatch"><i class="layui-icon">&#xe640;</i>删除选中</button>
+
+    <!-- 权限列表开始 -->
+    <table class="layui-table layui-form" id="treeTable"></table>
+    <!-- 权限列表结束 -->
+
+    <!-- 添加表单开始 -->
+    <div style="display: none;" id="addDiv">
+        <form class="layui-form" action="" lay-filter="addForm" id="addForm">
+            <div class="layui-form-item">
+                <label class="layui-form-label">权限名称</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="permissionName" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">权限</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="permission" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item" style="display: none;">
+                <label class="layui-form-label">父菜单ID</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="pid"/>
+                </div>
+            </div>
+            <div class="layui-form-item" style="display: none;">
+                <label class="layui-form-label">层级</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="grade" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="addSubmit"><i class="layui-icon">&#x1005;</i>确认</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- 添加表单结束 -->
+
+    <!-- 修改表单开始 -->
+    <div style="display: none;" id="updateDiv">
+        <form class="layui-form" action="" lay-filter="updateForm" id="updateForm">
+            <div class="layui-form-item" style="display: none;">
+                <label class="layui-form-label">ID</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="id"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">权限名称</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="permissionName" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">权限</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="permission" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="updateSubmit"><i class="layui-icon">&#x1005;</i>确认</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- 修改表单结束 -->
+</div>
+
+<script src="http://localhost:63342/ty-wc-manager-layui/web/js/wcManager.js" charset="utf-8"></script>
+
+<script>
+    // ajax全局参数设置，允许携带cookie
+    $.ajaxSetup({
+        xhrFields: {
+            withCredentials: true
+        }
+    });
+
+    layui.config({
+        base: '/ty-wc-manager-layui/web/resources/',
+    }).extend({
+        treeTable: 'treeTable'
+    });
+    layui.use(['treeTable','layer','form'],function () {
+        let treeTable = layui.treeTable;
+        let layer = layui.layer;
+        let form = layui.form;
+        let tableObj;
+
+        renderTreeTable();
+
+        // 渲染属性表格
+        function renderTreeTable() {
+            permissionPost.all(function (result) {
+                tableObj = treeTable.render({
+                    elem: '#treeTable',
+                    data: result.data,
+                    icon_key: 'permissionName',
+                    top_value: 0,
+                    primary_key: 'id',
+                    parent_key: 'pid',
+                    is_checkbox: true,
+                    is_open: true,
+                    cols: [
+                        {key: 'permissionName', title: '权限名称', width: 160, template: function (item) {
+                                if(item.grade === 1){
+                                    return item.permissionName;
+                                }else if(item.grade === 2){
+                                    return "&nbsp&nbsp&nbsp&nbsp"+item.permissionName;
+                                }
+                            }},
+                        {key: 'permission', title: '权限', width: 160, align: 'center'},
+                        {key: 'id', title: 'ID', width: 80, align: 'center'},
+                        {key: 'pid', title: '父ID', width: 80, align: 'center'},
+                        {key: 'grade', title: '层级', width: 80, align: 'center'},
+                        {key: 'createTime', title: '创建时间', align:'center', width: 160},
+                        {key: 'updateTime', title: '修改时间', align:'center', width: 160, template: function (item) {
+                                if (item.updateTime === undefined) {
+                                    return "未修改";
+                                }else{
+                                    return item.updateTime;
+                                }
+                            }},
+                        {
+                            title: '操作', align: 'center', template: function (item) {
+                                let addBtn = '<a class="layui-btn layui-btn-sm layui-btn-warm" lay-filter="addGradeTwo">添加2级权限</a>';
+                                let updateBtn = '<a class="layui-btn layui-btn-sm layui-btn-normal" lay-filter="update">修改</a>';
+                                let deleteBtn = '<a class="layui-btn layui-btn-sm layui-btn-danger" lay-filter="delete">删除</a>';
+                                if(item.grade === 1){
+                                    return updateBtn+addBtn;
+                                }else if(item.grade === 2){
+                                    return updateBtn+deleteBtn;
+                                }
+                            }
+                        }
+                    ],
+                });
+            });
+        }
+
+        // 点击"刷新"
+        $("#refresh").on("click",function () {
+            renderTreeTable();
+        });
+        // 点击"全部展开"
+        $("#openAll").on("click",function () {
+            treeTable.openAll(tableObj);
+        });
+        // 点击"全部关闭"
+        $("#closeAll").on("click",function () {
+            treeTable.closeAll(tableObj);
+        });
+        // 点击"添加1级权限"
+        $("#addGradeOne").on("click",function () {
+            layer.open({
+                type:1
+                ,skin: 'layui-layer-lan'
+                ,title: ['添加1级权限', 'font-size:15px;']
+                ,content: $("#addDiv")
+                ,area: ['500px']
+                ,success: function () {
+                    utils.clearForm("addForm");
+                    $("#addForm input[name=pid]").val("0");
+                    $("#addForm input[name=grade]").val("1");
+                }
+            });
+        });
+        // 点击"删除选中"
+        $("#deleteBatch").on("click",function () {
+            let permissionsId = treeTable.checked(tableObj);
+            if (permissionsId.length < 1) {
+                layer.msg('请勾选至少1个权限');
+                return false;
+            }
+            layer.confirm('确认删除？', function(){
+                permissionPost.deleteBatch(permissionsId, function (result) {
+                    if (result.code === CODE.success) {
+                        renderTreeTable();
+                        layer.close(layer.index);
+                        utils.successMsg("成功");
+                    } else {
+                        utils.errorMsg(result.msg());
+                    }
+                });
+            });
+        });
+        // 点击"添加2级权限"
+        treeTable.on('tree(addGradeTwo)',function(data){
+            let permissionObj = data.item;
+            layer.open({
+                type:1
+                ,skin: 'layui-layer-lan'
+                ,title: ['添加2级权限', 'font-size:15px;']
+                ,content: $("#addDiv")
+                ,area: ['500px']
+                ,success: function () {
+                    utils.clearForm("addForm");
+                    $("#addForm input[name=pid]").val(permissionObj.id);
+                    $("#addForm input[name=grade]").val("2");
+                }
+            });
+        })
+        // 点击"修改"
+        treeTable.on('tree(update)',function(data){
+            let obj = data.item;
+            layer.open({
+                type:1
+                ,skin: 'layui-layer-lan'
+                ,title: ['修改权限', 'font-size:15px;']
+                ,content: $("#updateDiv")
+                ,area: ['500px']
+                ,success: function () {
+                    utils.clearForm("updateForm");
+                    $("#updateForm input[name=id]").val(obj.id);
+                    $("#updateForm input[name=permissionName]").val(obj.permissionName);
+                    $("#updateForm input[name=permission]").val(obj.permission);
+                }
+            });
+        });
+        // 点击"删除"
+        treeTable.on('tree(delete)',function(data){
+            let obj = data.item;
+            layer.confirm('确认删除？', function(){
+                permissionPost.delete(obj.id, function (result) {
+                    if (result.code === CODE.success) {
+                        renderTreeTable();
+                        layer.close(layer.index);
+                        utils.successMsg("成功");
+                    } else {
+                        utils.errorMsg(result.msg());
+                    }
+                });
+            });
+        });
+
+        // 监听添加表单提交
+        form.on('submit(addSubmit)', function (form) {
+            permissionPost.add(form.field, function (result) {
+                if (result.code === CODE.success) {
+                    layer.close(layer.index);
+                    utils.successMsg("成功");
+                } else {
+                    utils.errorMsg(result.msg);
+                }
+            });
+        });
+
+        // 监听修改表单提交
+        form.on('submit(updateSubmit)', function (form) {
+            permissionPost.update(form.field, function (result) {
+                if (result.code === CODE.success) {
+                    layer.close(layer.index);
+                    utils.successMsg("成功");
+                } else {
+                    utils.errorMsg(result.msg);
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

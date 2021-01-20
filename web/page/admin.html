@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>admin</title>
+    <link rel="stylesheet" href="../resources/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/page/admin.css">
+</head>
+<body>
+<div class="content">
+
+    <!-- 搜索表单开始 -->
+    <div id="searchDiv">
+        <form class="layui-form" id="searchForm">
+            <div class="layui-form-item">
+                <div class="layui-input-inline">
+                    <input type="text" name="id" class="layui-input" placeholder="管理员ID"/>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="username" class="layui-input" placeholder="用户名" />
+                </div>
+                <div class="layui-input-inline">
+                    <select name="state">
+                        <option value="">状态</option>
+                        <option value="1">正常</option>
+                        <option value="0">锁定</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="createStartTime" id="createStartTime" class="layui-input" placeholder="创建时间下限"/>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="createEndTime" id="createEndTime" class="layui-input" placeholder="创建时间上限"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-inline">
+                    <input type="text" name="updateStartTime" id="updateStartTime" class="layui-input" placeholder="修改时间下限"/>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="updateEndTime" id="updateEndTime" class="layui-input" placeholder="修改时间上限"/>
+                </div>
+                <button class="layui-btn " lay-submit lay-filter="searchSubmit"><i class="layui-icon">&#xe615;</i>搜索</button>
+                <button type="reset" class="layui-btn "><i class="layui-icon">&#xe9aa;</i>重置</button>
+            </div>
+        </form>
+    </div>
+    <!-- 搜索表单结束 -->
+
+    <!-- 管理员列表开始 -->
+    <table class="layui-table" id="adminList" lay-filter="adminList"></table>
+    <!-- 管理员列表结束 -->
+
+    <!-- 添加管理员表单开始 -->
+    <div style="display: none;" id="addDiv">
+        <form class="layui-form" action="" lay-filter="addForm" id="addForm">
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="username" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-block">
+                    <input type="password" class="layui-input" name="password"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">手机号</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" maxlength="11" name="phone" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">邮箱</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="email" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-block">
+                    <select name="state">
+                        <option value="1" selected>正常</option>
+                        <option value="0">锁定</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="addSubmit"><i class="layui-icon">&#x1005;</i>确认</button>
+                    <button type="reset" class="layui-btn layui-btn-warm"><i class="layui-icon">&#xe9aa;</i>重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- 添加管理员表单结束 -->
+
+    <!-- 修改管理员表单开始 -->
+    <div style="display: none;" id="updateDiv">
+        <form class="layui-form" action="" lay-filter="updateForm" id="updateForm">
+            <div class="layui-form-item" style="display: none">
+                <label class="layui-form-label">ID</label>
+                <div class="layui-input-block">
+                    <input type="text" name="id"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="username" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">手机号</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" maxlength="11" name="phone" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">邮箱</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="email" autocomplete="off"/>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-block">
+                    <select name="state">
+                        <option value="1">正常</option>
+                        <option value="0">锁定</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="updateSubmit"><i class="layui-icon">&#x1005;</i>确认</button>
+                    <button type="reset" class="layui-btn layui-btn-warm"><i class="layui-icon">&#xe9aa;</i>重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- 修改管理员表单结束 -->
+
+    <!-- 角色表单开始 -->
+    <div style="display: none;" id="roleDiv">
+        <form class="layui-form" action="" lay-filter="roleForm" id="roleForm">
+            <div class="layui-form-item" style="display: none;">
+                <div class="layui-input-block">
+                    <input type="text" name="adminId"/>
+                </div>
+            </div>
+            <div class="layui-form-item" style="margin-bottom: 250px;">
+                <div class="layui-input-block">
+                    <div id="roles"></div>
+                </div>
+            </div>
+            <div class="layui-form-item" >
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="rolesSubmit"><i class="layui-icon">&#x1005;</i>确认</button>
+                    <button class="layui-btn layui-btn-warm" id="rolesClose"><i class="layui-icon">&#x1006;</i>取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- 角色表单结束 -->
+
+</div>
+
+<script src="http://localhost:63342/ty-wc-manager-layui/web/js/wcManager.js" charset="utf-8"></script>
+<script src="http://localhost:63342/ty-wc-manager-layui/web/resources/layui/xm-select.js" charset="utf-8"></script>
+
+<!-- 头部工具栏 -->
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i>添加</button>
+        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除</button>
+    </div>
+</script>
+
+<!-- 行工具栏 -->
+<script type="text/html" id="operateCol">
+    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update">修改</a>
+    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="role">角色</a>
+    <a class="layui-btn layui-btn-sm layui-btn-normal" lay-event="resetPwd">重置密码</a>
+    <a class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">删除</a>
+</script>
+
+<script>
+    // ajax全局参数设置，允许携带cookie
+    $.ajaxSetup({
+        xhrFields: {
+            withCredentials: true
+        }
+    })
+
+    layui.use(['table','layer','form','laydate'], function(){
+        let table = layui.table;
+        let layer = layui.layer;
+        let form = layui.form;
+        let laydate = layui.laydate;
+
+        // 渲染数据表格
+        let tableId = "adminList";
+        let url = URL.serverHost + URL.admin + URL.listByCondition;
+        let toolbarId = "toolbarDemo";
+        let cols = [[
+            {type:'checkbox', fixed:'center', width: 80}
+            ,{field: 'id', title: 'ID', align:'center',  sort: true, width: 80}
+            ,{field: 'username', title: '用户名', align:'center', width: 160}
+            ,{field: 'phone', title: '手机号', align:'center', width: 160}
+            ,{field: 'email', title: '邮箱', align:'center', width: 160}
+            ,{field: 'createTime', title: '创建时间', align:'center', width: 160}
+            ,{field: 'updateTime', title: '修改时间', align:'center', width: 160}
+            ,{field: 'state', title: '状态', align:'center', width: 80,templet: function (d) {
+                    return utils.formatState(d.state);
+                }}
+            ,{title:'操作',templet:'#operateCol', fixed: 'right', align:'center'}
+        ]];
+        utils.renderTable(tableId, url, toolbarId, cols, utils.formatResult);
+
+        // 监听搜索表单提交
+        form.on('submit(searchSubmit)', function (form) {
+            let formJsonObj = form.field;
+            utils.reloadTable("adminList", formJsonObj);
+            return false;
+        });
+
+        // 监听头部工具栏事件
+        table.on('toolbar(adminList)', function (obj) {
+            let checkStatus = table.checkStatus(obj.config.id);
+            switch(obj.event){
+                case 'add':
+                    openAddDiv();
+                    break;
+                case 'delete':
+                    let ids=[];
+                    for (let i = 0; i < checkStatus.data.length; i++) {
+                        ids.push(checkStatus.data[i].id);
+                    }
+                    deleteBatch(ids);
+                    break;
+                default :
+                    break;
+            }
+        })
+
+        // 监听行工具事件
+        table.on('tool(adminList)', function(obj){
+            let rowJsonObj = obj.data;
+            switch(obj.event){
+                case 'update':
+                    openUpdateDiv(rowJsonObj);
+                    break;
+                case 'delete':
+                    deleteById(rowJsonObj.id);
+                    break;
+                case 'resetPwd':
+                    resetPwd(rowJsonObj.id);
+                    break;
+                case 'role':
+                    openRoleDiv(rowJsonObj.id);
+                    break;
+            }
+        });
+
+        // 添加管理员
+        function openAddDiv() {
+            layer.open({
+                type:1
+                ,skin: 'layui-layer-lan'
+                ,title: ['添加管理员', 'font-size:15px;']
+                ,content: $("#addDiv")
+                ,area:  ['500px']
+                ,success: function () {
+                    utils.clearForm("addForm");
+                }
+            });
+        }
+        form.on('submit(addSubmit)', function (form) {
+            let jsonObj = form.field;
+            if (utils.isEmpty(jsonObj.username)) {
+                layer.msg('用户名不能为空');
+                return false;
+            }
+            if (utils.isEmpty(jsonObj.password)) {
+                layer.msg('密码不能为空');
+                return false;
+            }
+            if (utils.isEmpty(jsonObj.state)) {
+                layer.msg('状态不能为空');
+                return false;
+            }
+            adminPost.add(jsonObj, function (result) {
+                if (result.code === CODE.success) {
+                    utils.reloadTable("adminList", {});
+                    layer.close(layer.index);
+                    utils.successMsg("成功");
+                } else {
+                    utils.errorMsg(result.msg());
+                }
+            });
+            return false;
+        });
+
+        // 修改管理员
+        function openUpdateDiv(rowJsonObj) {
+            layer.open({
+                type:1
+                ,skin: 'layui-layer-lan'
+                ,title: ['修改管理员', 'font-size:15px;']
+                ,content: $("#updateDiv")
+                ,area: ['500px']
+                ,success: function () {
+                    utils.clearForm("updateForm");
+                    form.val("updateForm",rowJsonObj);
+                }
+            });
+        }
+        form.on('submit(updateSubmit)', function (form) {
+            let jsonObj = form.field;
+            if (utils.isEmpty(jsonObj.username)) {
+                layer.msg('用户名不能为空');
+                return false;
+            }
+            if (utils.isEmpty(jsonObj.state)) {
+                layer.msg('状态不能为空');
+                return false;
+            }
+            adminPost.update(jsonObj, function (result) {
+                if (result.code === CODE.success) {
+                    utils.reloadTable("adminList", {});
+                    layer.close(layer.index);
+                    utils.successMsg("成功");
+                } else {
+                    utils.errorMsg(result.msg);
+                }
+            });
+            return false;
+        });
+
+        // 修改角色
+        function openRoleDiv(adminId) {
+            layer.open({
+                type:1
+                ,skin: 'layui-layer-lan'
+                ,title: ['角色', 'font-size:15px;']
+                ,content: $("#roleDiv")
+                ,area:  ['600px']
+                ,success: function () {
+                    form.val("roleForm", {"adminId":adminId});
+                }
+            });
+            allRoles(adminId);
+        }
+        function allRoles(adminId) {
+            adminRolePost.allRoles(adminId, function (result) {
+                if (result.code === CODE.success) {
+                    let data = utils.formatDataForSelect(result.data,"roleName","id");
+                    rolesSelect.update({
+                        data: data
+                    })
+                } else {
+                    utils.errorMsg(result.msg);
+                }
+            });
+        }
+        form.on('submit(rolesSubmit)', function (form) {
+            let jsonObj = form.field;
+            let adminId = jsonObj.adminId;
+            let rolesId = jsonObj.select.split(",");
+            adminRolePost.updateAdminRoles(adminId, rolesId, function (result) {
+                if (result.code === CODE.success) {
+                    layer.close(layer.index);
+                    utils.successMsg("成功");
+                } else {
+                    utils.errorMsg(result.msg);
+                }
+            });
+            return false;
+        });
+        $("#rolesClose").on("click", function(){
+            layer.close(layer.index);
+        });
+
+        //删除1个管理员
+        function deleteById(id) {
+            if (utils.isEmpty(id)) {
+                layer.msg('管理员ID不能为空');
+                return false;
+            }
+            layer.confirm('确认删除？', function(){
+                adminPost.delete(id, function (result) {
+                    if (result.code === CODE.success) {
+                        utils.reloadTable("adminList", {});
+                        layer.close(layer.index);
+                        utils.successMsg("成功");
+                    } else {
+                        utils.errorMsg(result.msg());
+                    }
+                });
+            });
+        }
+
+        //重置密码
+        function resetPwd(id) {
+            if (utils.isEmpty(id)) {
+                layer.msg('管理员ID不能为空');
+                return false;
+            }
+            layer.confirm('确认重置密码？', function(){
+                adminPost.resetPwd(id, function (result) {
+                    if (result.code === CODE.success) {
+                        layer.close(layer.index);
+                        utils.successMsg("成功");
+                    } else {
+                        utils.errorMsg(result.msg());
+                    }
+                });
+            });
+        }
+
+        // 删除多个管理员
+        function deleteBatch(ids) {
+            if (ids.length < 1) {
+                layer.msg('请勾选至少1个管理员');
+                return false;
+            }
+            layer.confirm('确认删除？', function(){
+                adminPost.deleteBatch(ids, function (result) {
+                    if (result.code === CODE.success) {
+                        utils.reloadTable("adminList");
+                        layer.close(layer.index);
+                        utils.successMsg("成功");
+                    } else {
+                        utils.errorMsg(result.msg());
+                    }
+                });
+            });
+        }
+
+        // 渲染下拉多选框
+        let rolesSelect = xmSelect.render({
+            el: '#roles'
+            ,paging: true
+            ,pageSize: 5
+            ,autoRow: true
+            ,data: []
+        })
+
+        // 渲染时间选择器
+        laydate.render({elem: '#createStartTime',type: 'datetime'});
+        laydate.render({elem: '#createEndTime',type: 'datetime'});
+        laydate.render({elem: '#updateStartTime',type: 'datetime'});
+        laydate.render({elem: '#updateEndTime',type: 'datetime'});
+    });
+</script>
+
+
+</body>
+</html>
