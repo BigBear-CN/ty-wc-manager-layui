@@ -175,7 +175,7 @@
 <!-- 头部工具栏 -->
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i>添加</button>
+        <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="addAdmin"><i class="layui-icon">&#xe654;</i>添加</button>
         <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除</button>
     </div>
 </script>
@@ -232,7 +232,7 @@
         table.on('toolbar(adminList)', function (obj) {
             let checkStatus = table.checkStatus(obj.config.id);
             switch(obj.event){
-                case 'add':
+                case 'addAdmin':
                     openAddDiv();
                     break;
                 case 'delete':
@@ -293,7 +293,7 @@
                 layer.msg('状态不能为空');
                 return false;
             }
-            adminPost.add(jsonObj, function (result) {
+            adminPost.addAdmin(jsonObj, function (result) {
                 if (result.code === CODE.success) {
                     utils.reloadTable("adminList", {});
                     layer.close(layer.index);

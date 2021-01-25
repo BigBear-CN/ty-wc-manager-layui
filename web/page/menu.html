@@ -28,6 +28,12 @@
                         <input type="text" class="layui-input" name="menuName" autocomplete="off"/>
                     </div>
                 </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">菜单标识</label>
+                    <div class="layui-input-block">
+                        <input type="text" class="layui-input" name="mark" autocomplete="off"/>
+                    </div>
+                </div>
                 <div class="layui-form-item" style="display: none;">
                     <label class="layui-form-label">父菜单ID</label>
                     <div class="layui-input-block">
@@ -62,6 +68,12 @@
                     <label class="layui-form-label">菜单名称</label>
                     <div class="layui-input-block">
                         <input type="text" class="layui-input" name="menuName" autocomplete="off"/>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">菜单标识</label>
+                    <div class="layui-input-block">
+                        <input type="text" class="layui-input" name="mark" autocomplete="off"/>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -117,6 +129,7 @@
                                         return "&nbsp&nbsp&nbsp&nbsp"+item.menuName;
                                     }
                                 }},
+                            {key: 'mark', title: '菜单标识', width: 80, align: 'center'},
                             {key: 'id', title: 'ID', width: 80, align: 'center'},
                             {key: 'pid', title: '父ID', width: 80, align: 'center'},
                             {key: 'createTime', title: '创建时间', align:'center', width: 160},

@@ -26,19 +26,19 @@
     <!--头部导航栏结束-->
     <!--左侧导航栏开始-->
     <ul class="side layui-side layui-nav layui-nav-tree layui-nav-side  layui-bg-black">
-        <li class="layui-nav-item" id="business">
+        <li class="layui-nav-item menu" id="business">
             <a href="javascript:;">业务管理</a>
             <dl class="layui-nav-child">
-                <dd><a href="javascript:;" id="account">客户列表</a></dd>
+                <dd><a href="javascript:;" id="account" class="menu">客户列表</a></dd>
             </dl>
         </li>
-        <li class="layui-nav-item" id="system">
+        <li class="layui-nav-item menu" id="system">
             <a href="javascript:;">系统管理</a>
             <dl class="layui-nav-child">
-                <dd><a href="javascript:;" id="admin">管理员列表</a></dd>
-                <dd><a href="javascript:;" id="role">角色列表</a></dd>
-                <dd><a href="javascript:;" id="menu">菜单列表</a></dd>
-                <dd><a href="javascript:;" id="permission">权限列表</a></dd>
+                <dd><a href="javascript:;" id="admin"  class="menu">管理员列表</a></dd>
+                <dd><a href="javascript:;" id="role"  class="menu">角色列表</a></dd>
+                <dd><a href="javascript:;" id="menu"  class="menu">菜单列表</a></dd>
+                <dd><a href="javascript:;" id="permission"  class="menu">权限列表</a></dd>
             </dl>
         </li>
     </ul>
@@ -96,6 +96,21 @@
         let layer = layui.layer;
         let element = layui.element;
         let form = layui.form;
+
+        // 隐藏所有菜单
+        $(".menu").css("display", "none");
+
+        // 查询登录用户拥有的菜单
+        adminPost.personal(function (result) {
+            let adminId = result.data.id;
+            console.log(adminId);
+            roleMenuPost.queryAdminMenus(adminId, function (result) {
+                let menus = result.data;
+                for (let i = 0; i < menus.length; i++) {
+                    menus[i] && menus[i].mark && $("#"+menus[i].mark).css("display", "block");
+                }
+            });
+        });
 
         // 个人信息
         $("#personal").on("click",function () {

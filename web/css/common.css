@@ -3,8 +3,23 @@
     padding: 0;
 }
 
+html, body {
+    width: 100%;
+    height: 100%;
+}
+.layui-layout-admin .layui-body {
+    bottom: 0;
+    overflow: inherit;
+}
+.layui-table-body {
+    height: auto!important;
+}
 body{
     background-color: #C7EDCC;
+}
+.layui-table-page {
+    padding: 0;
+    margin: 1.25rem 0;
 }
 
 /*内联页面*/

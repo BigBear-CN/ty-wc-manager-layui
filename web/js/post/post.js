@@ -36,6 +36,10 @@ let adminPost = {
         this.adminPost(URL.update, adminObj, success);
     },
 
+    addAdmin: function (adminObj, success) {
+        this.adminPost(URL.addAdmin, adminObj, success);
+    },
+
     resetPwd: function (adminId, success) {
         this.adminPost(URL.resetPwd, adminId, success);
     },
@@ -83,6 +87,9 @@ let roleMenuPost = {
         this.roleMenuPost(URL.queryRoleMenus, roleId, success);
     },
 
+    queryAdminMenus: function (roleId, success) {
+        this.roleMenuPost(URL.queryAdminMenus, roleId, success);
+    },
 };
 
 let rolePermissionPost = {
@@ -233,6 +240,7 @@ const URL = {
     ,updateRoleMenus: "/updateRoleMenus"
     ,queryRolePermissions: "/queryRolePermissions"
     ,updateRolePermissions: "/updateRolePermissions"
+    ,queryAdminMenus: "/queryAdminMenus"
 };
 
 // post方法(封装jQuery)
